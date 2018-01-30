@@ -1,0 +1,28 @@
+---
+
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  vars_prompt:
+  - name: "mgmt_password"
+    prompt: "Password"
+
+  tasks:
+
+  - name: SYS | Define provider
+    set_fact:
+      provider:
+        host: "{{ inventory_hostname }}"
+
+        password: "{{ mgmt_password }}"
+
+  - name: get CDP neighbors
+    ios_command:
+      provider: "{{ provider }}"
+      commands:
+        - show cdp neighbors
+    register: neighbors
+
+  - debug: msg="{{ neighbors.stdout }}"
+
