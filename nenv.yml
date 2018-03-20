@@ -1,0 +1,31 @@
+---
+
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  vars_prompt:
+  - name: "mgmt_uname"
+    prompt: "Username"
+
+  - name: "mgmt_password"
+    prompt: "Password"
+
+  tasks:
+
+  - name: SYS | Define provider
+    set_fact:
+      provider:
+        host: "{{ inventory_hostname }}"
+        username: "{{ mgmt_uname }}"
+        password: "{{ mgmt_password }}"
+
+  - name: NXOS | show env power 
+    nxos_command:
+      provider: "{{ provider }}"
+      commands: show env power 
+    register: env_pwr 
+
+  - debug: msg="{{ env_pwr.stdout }}"
+
+
